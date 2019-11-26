@@ -40,5 +40,6 @@ SaveScriptBefore=true
 ## translation-file building 
 
 1. Open your main script in thinAir, stay on this tab.
-2. thinAir menu : Tools\User Tools\Thinternational
+2. thinAir menu : Tools\User Tools\thinternational
 3. In your main script folder, edit your xml file (I use Notepad++) to complete it with translations.
+
