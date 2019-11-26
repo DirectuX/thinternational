@@ -1,0 +1,366 @@
+'---Script created on 11-14-2019 21:46:52
+#MINVERSION 1.11.1.0
+
+#BUNDLE Version "Comments"         , "thinAir tool used to build/update translation file"
+#BUNDLE Version "CompanyName"      , ""
+#BUNDLE Version "FileDescription"  , "thinAir tool used to build/update translation file"
+#BUNDLE Version "LegalCopyright"   , "All right reserved"
+#BUNDLE Version "LegalTrademarks"  , ""
+#BUNDLE Version "ProductName"      , "thinBasic_I18N"
+#BUNDLE Version "OriginalFilename" , "thinternational"
+
+#BUNDLE Version "ProductVersion"   , "0.0.0.1"
+#BUNDLE Version "FileVersion"      , "0.0.0.1"
+
+'USES "Console"
+USES "OS"
+Uses "File"
+uses "I18N"
+DIM I18N as new cI18N
+
+'[todo] Log file
+'[!] Currently no support for tbasic delimiters (colon sign, semi-colon sign) and underscore-ended linecodes (not crucial as long as i18nh is not on that line)
+'[!] Currently no support for C-Like comments using /* ... */ pairs
+'[!] Currently no support for #include files with path other than relative to the main script file( https://www.thinbasic.com/public/products/thinBasic/help/html/include.htm )
+'[!] Currently no support for #includedir instruction
+'[!] Currently no support for multi-line strings ( https://www.thinbasic.com/public/products/thinBasic/help/html/multi_line_strings.htm )
+'[!] Currently no support for RAWTEXT blocs ( https://www.thinbasic.com/public/products/thinBasic/help/html/rawtext.htm )
+'[!] Currently no support for Alias ( https://www.thinbasic.com/public/products/thinBasic/help/html/alias.htm )
+'[!] Currently does not check for #includes calling themselve in a recursive way
+
+Dim mainFile as String Value ' path to the script to be processed
+Dim FileHandle, FileHandleOUT as DWord
+Dim IncludePath as String ' prefix path for all #include files
+Dim cTXT as String ' Current line String being processed
+Dim tTXT as String ' Temporary string for processing
+
+Const XMLExtension as String = ".AllLanguages.xml"
+Const AllLanguages_filenameCONST as String = "AllLanguages_filename"
+Dim AllLanguages_filenameVAR as String = "" ' 1st part of the filename of the XML translation file
+Const Dev_localCONST as String = "Dev_local"
+Dim Dev_localVAR as String = "" ' language code of the strings in the script
+Const Additional_localsCONST as String = "Additional_locals"
+Dim Additional_localsVAR as String = "" ' additionnal langage codes whished in the XML translation file
+Dim Additional_localsARR() as string ' splitted additionnal langage codes
+dim XMLFile as String ' path to the XML translation file
+Dim XMLFileExists as Boolean
+Dim tempFilename as String
+
+Const i18nhID as String = "I18NH("
+Const includeException as string = "I18N_helper.tbasicu"
+
+Type TranslationData
+  trKey as String      ' XML key
+  trOriginal as String ' original string
+  trComment as String  ' comment to the translater
+  trLineCode as String ' linecode as comment if multiple i18nh
+  trScript as String   ' filename of the script
+End Type
+
+const xmlComStart as string = "<!-->"
+const xmlComEnd as string = "<-->"
+Const xmlComWrap as String = "  *****  "
+Const xmlKeyIntro as string = "<Sentence key=" & $DQ
+Const xmlLangstart as string = $DQ & " lang=" & $DQ
+Const xmlLangEnd as string = $DQ & ">"
+Const xmlKeyOutro as string = "</Sentence>"
+
+'[t] multidimensional arrays badly preserve resize (or at least as shown by thinDebug)
+Dim i18nhStr() as TranslationData ' use of TYPE to avoid multidimension
+Dim i18nhCount as DWord ' count of strings to translate
+
+Dim includeFiles(), includeAllFiles() as String ' list of #include path found
+Dim includeCount as DWord ' count of #include path found
+
+Dim Counter as DWord ' for loops
+
+Function TBMain()
+'[breakpoint] <Any note here. Breakpoint will be set to line following this statement>
+
+  dim tempIncludeName as String
+  
+  OS_CommandsSetSep($DQ)' By default OS_GetCommand splits path that contains dash signs (unwanted)
+  
+  mainFile = OS_GetCommand(2)
+  mainFile = Trim$(mainFile,$DQ) 'when script is bundled, OS_GetCommand return parameters with double quotes; when in thinAir, there are no dq (unwanted)
+  
+  If OS_GetCommands <> 2 Then ' parameters are expected to be from 00 to 02
+    MsgBox ("Parameters count invalid")
+    Stop 
+  endif
+  if (FILE_Exists(mainFile)) then
+    Msgbox("Opening " & mainFile)
+  else
+    MsgBox ("Can't open " & mainFile)
+    Stop
+  endif
+
+  IncludePath = FILE_PathSplit(mainFile,%Path_RootPath)
+
+  FileHandle = FILE_Open(mainFile,"INPUT")
+
+  '*******************************************************************
+  ' search for #includes and I18N_Tweaking Const in main script
+  '*******************************************************************
+  while not file_eof(FileHandle) 
+
+    cTXT = FILE_LineInput(FileHandle)
+    
+    if isComment(cTXT) then Iterate while
+    
+    if isConst(cTXT) Then
+    '[] Feature: a "instr" that is not case-sensitive
+      tTXT = Remain$(cTXT,AllLanguages_filenameCONST,FALSE)      ' we need a "instr" that is not case-sensitive
+      if len(tTXT)>0 Then   'Found! 
+        AllLanguages_filenameVAR = Grab$(tTXT,chr$(34),chr$(34))
+      Else
+        tTXT = Remain$(cTXT,Dev_localCONST,False)
+        if len(tTXT)>0 Then   'Found!
+          Dev_localVAR = Grab$(tTXT,chr$(34),chr$(34))
+        Else
+          tTXT = Remain$(cTXT,Additional_localsCONST,False)
+          if len(tTXT)>0 Then   'Found!
+            Additional_localsVAR = Grab$(tTXT,chr$(34),chr$(34))
+          endif
+        endif
+      endif
+    Elseif isInclude(cTXT) then
+      tempIncludeName = Grab$(cTXT,chr$(34),chr$(34))
+      if tempIncludeName <> includeException then
+        incr includeCount
+        ReDim Preserve includeFiles(includeCount)
+        includeFiles(includeCount) = IncludePath & Grab$(cTXT,chr$(34),chr$(34))
+      endif
+    endif
+
+  wend
+
+  file_close(FileHandle)
+
+  if not (( len(AllLanguages_filenameVAR) >0 ) AND ( len(Dev_localVAR) >0 ) AND ( len(Additional_localsVAR) >0 )) then 
+    MsgBox ("Error in I18N_Tweaking parameters")
+    STOP
+  end if
+  '*******************************************************************
+  ' recursively list all #include scripts
+  '*******************************************************************
+  Counter = 1
+  while Counter <= includeCount
+    findAllIncludes(Counter)
+    incr Counter
+  wend
+
+  incr includeCount
+  ReDim Preserve includeFiles(includeCount)
+  includeFiles(includeCount) = mainFile
+
+  '[] Feature: operate directly on the source array
+  Array Unique includeFiles, includeAllFiles, Ascend     '  we can't operate directly on the source array !
+  'Redim includeFiles(ubound(includeAllFiles))
+  'Memory_Copy(varptr(includeFiles(1)),varptr(includeAllFiles(1)),sizeof(includeAllFiles())) ' Does not work
+
+  includeCount = ubound(includeAllFiles)
+
+  '[t] thinAir BUG : in the comment below, inserting a double quote right after the bracket displays a red notification, but this is a comment!
+  '                  maybe related to https://www.thinbasic.com/community/showthread.php?12983-Code-coloring
+
+  '*******************************************************************
+  ' search for   i18nh(   in all scripts
+  '*******************************************************************
+  
+  Counter = 1
+  while Counter <= includeCount
+    findAlli18nh(Counter)
+    incr Counter
+  wend
+
+
+
+  '*******************************************************************
+  ' update the translation file
+  '*******************************************************************
+  
+  for i as DWord = 1 to ubound(i18nhstr) ' Convert unauthorized chars
+    i18nhstr(i).trKey = XMLEscape(i18nhstr(i).trOriginal)
+    i18nhstr(i).trOriginal = XMLEscapePartially(i18nhstr(i).trOriginal)
+  next
+
+  Split(Additional_localsVAR, ";", Additional_localsARR)
+  Array Sort Additional_localsARR(1) , Ascend
+  
+  XMLFile = includePath & AllLanguages_filenameVAR & XMLExtension
+  tempFilename = includePath & GUIDTXT$(GUID$) & XMLExtension
+  
+  if FILE_Exists(XMLFile) Then ' Backup
+    FILE_Copy(XMLFile,FILE_PathSplit(mainFile,%Path_RootPath) & AllLanguages_filenameVAR & REMOVE$(DateTime$, ":") & XMLExtension)
+    XMLFileExists = True
+    I18N.Load(FILE_PathSplit(XMLFile,%Path_RootPath),FILE_PathSplit(XMLFile,%Path_File))
+  Else
+    XMLFileExists = FALSE
+  EndIf
+  
+  FileHandleOUT = FILE_Open(tempFilename, "OUTPUT")
+  
+  FILE_LinePrint(FileHandleOUT,"<?xml version=" & $DQ & "1.0" & $DQ & " encoding=" & $DQ & "utf-8" & $DQ & "?>")
+  FILE_LinePrint(FileHandleOUT,"<i18n>")
+  PutScriptName(FileHandleOUT,i18nhstr(1).trScript)
+  
+  For i as DWord = 1 to ubound(i18nhstr)
+    
+    If i>1 then
+      if i18nhstr(i).trScript <> i18nhstr(i-1).trScript Then
+        PutScriptName(FileHandleOUT,i18nhstr(i).trScript)
+      endif
+    endif
+    if i18nhstr(i).trLineCode <> "" then
+      tTXT = $TAB & xmlComStart & i18nhstr(i).trLineCode & xmlComEnd
+      FILE_LinePrint(FileHandleOUT,tTXT)
+    endif
+    if i18nhstr(i).trComment <> "" then
+      tTXT = $TAB & wrap$(i18nhstr(i).trComment, xmlComStart, xmlComEnd)
+      FILE_LinePrint(FileHandleOUT,tTXT)
+    endif
+    tTXT = $TAB & xmlKeyIntro & i18nhstr(i).trKey & xmlLangstart & Dev_localVAR & xmlLangEnd & i18nhstr(i).trOriginal & xmlKeyOutro
+    FILE_LinePrint(FileHandleOUT,tTXT)
+    For j as DWord = 1 to ubound(Additional_localsARR)
+      if XMLFileExists then
+        I18N.Setlocale(Additional_localsARR(j))
+        tTXT = I18N.Gettext(i18nhstr(i).trKey)
+      Else
+        tTXT = ""
+      endif
+      tTXT = $TAB & xmlKeyIntro & i18nhstr(i).trKey & xmlLangstart & Additional_localsARR(j) & xmlLangEnd & tTXT & xmlKeyOutro
+      FILE_LinePrint(FileHandleOUT,tTXT)
+    next
+    FILE_LinePrint(FileHandleOUT,"")
+  next
+  
+  FILE_LinePrint(FileHandleOUT,"</i18n>")
+  FILE_Close(FileHandleOUT)
+  FILE_ShellDelete(XMLFile)
+  FILE_Rename(tempFilename,XMLFile)
+  
+  MsgBox("OK.",,"thinternationnal")
+
+end function
+
+Function PutScriptName(FH as DWord, txt as String)
+  dim tempTXT as String value = Wrap$(txt, xmlComWrap, xmlComWrap)
+  FILE_LinePrint(FH,"")
+  FILE_LinePrint(FH,"")
+  FILE_LinePrint(FH,wrap$(string$(len(tempTXT),"*"), xmlComStart, xmlComEnd))
+  FILE_LinePrint(FH,wrap$(tempTXT, xmlComStart, xmlComEnd))
+  FILE_LinePrint(FH,wrap$(string$(len(tempTXT),"*"), xmlComStart, xmlComEnd))
+  FILE_LinePrint(FH,"")
+  FILE_LinePrint(FH,"")
+end function
+
+Function XMLEscapePartially(stringValue as String) as String
+  stringValue=Replace$(stringValue,Chr$(38),"&amp;") '     '&' must be first
+  stringValue=Replace$(stringValue,Chr$(60),"&lt;")
+  stringValue=Replace$(stringValue,Chr$(62),"&gt;")
+  Return stringValue
+end function
+
+Function XMLEscape(stringValue as String) as String
+  stringValue=Replace$(stringValue,Chr$(38),"&amp;") '     '&' must be first
+  stringValue=Replace$(stringValue,Chr$(34),"&quot;")
+  stringValue=Replace$(stringValue,Chr$(39),"&apos;")
+  stringValue=Replace$(stringValue,Chr$(60),"&lt;")
+  stringValue=Replace$(stringValue,Chr$(62),"&gt;")
+  Return stringValue
+end function
+
+Function findAlli18nh(includeNumber)
+FileHandle = FILE_Open(includeAllFiles(includeNumber),"INPUT")
+Dim currentFilename as String value = includeAllFiles(includeNumber)
+    while not file_eof(FileHandle)
+      cTXT = trim$(FILE_LineInput(FileHandle))
+      if isComment(cTXT) then Iterate while
+      isI18N(cTXT,includeAllFiles(includeNumber))
+    wend
+  file_close(FileHandle)
+end function
+
+Function findAllIncludes(includeNumber as Integer)
+  FileHandle = FILE_Open(includeFiles(includeNumber),"INPUT")
+    while not file_eof(FileHandle)
+'[t] thinBasic BUG ? FILE_LineInput : the first line of the file is wrongly returned : ï»¿#MINVERSION 1.11.1.0
+      cTXT = FILE_LineInput(FileHandle)
+      if isComment(cTXT) then Iterate while
+      if isInclude(cTXT) then
+        incr includeCount
+        ReDim Preserve includeFiles(includeCount)
+        includeFiles(includeCount) = IncludePath & Grab$(cTXT,chr$(34),chr$(34))
+      endif
+    wend
+  file_close(FileHandle)
+end function
+
+Function isI18N(byval txt as String, byval src as string)
+  Dim localCounter as Integer 'How many i18nh in the linecode
+  Dim txtkeeper as String 'Keeps original linecode
+  txtkeeper = txt
+  do
+    txt = Remain$(txt,i18nhID,False)
+    if len(txt)>0 then ' extract all strings
+      incr localCounter
+      incr i18nhCount
+      redim Preserve i18nhStr(i18nhCount)
+      '[t] thinDebugger BUG : shows false values for contents of i18nhStr(i18nhCount) 
+      i18nhStr(i18nhCount).trOriginal = Grab$(txt,chr$(34),chr$(34))
+      i18nhStr(i18nhCount).trScript = src
+      txt = Ltrim$(Remain$(txt,i18nhStr(i18nhCount).trOriginal,False))
+      isComa(txt) ' Check if there is a comment to the translator
+    Else
+      Exit DO
+    endif
+  loop
+  if localCounter > 1 Then
+    i18nhStr(1+i18nhCount-localCounter).trLineCode = txtkeeper
+  endif
+end function
+
+function isComa(byval txt as String) as Boolean
+  for i as Integer = 1 to len(txt)
+    if MIDW$(txt,i,1) = "," Then ' There is a comment to the translator
+      txt = midw$(txt,i) 
+      i18nhStr(i18nhCount).trComment = Grab$(TXT,chr$(34),chr$(34)) ' Extract the comment
+      return true
+    Elseif MIDW$(txt,i,1) = ")" Then ' the function is closed, there were no comment
+      return false
+    endif
+  Next i
+end function
+
+Function isComment(txt as String) as Boolean
+'[t] How to quick test if there is a comment at the end of the linecode ?
+  txt = Trim$(txt)
+  if StartsWith(txt,"'",FALSE) then
+    return TRUE
+  elseif Startswith(txt,"REM ",False) Then
+    Return TRUE
+  elseif Startswith(txt,"//",False) Then
+    Return TRUE
+  Else ' note : thinDebugger treats if/elseif as if it was one big instruction (no step by step display)
+    return FALSE
+  endif
+end function
+
+Function isInclude(byval txt as String) as Boolean
+  txt = Trim$(txt)
+  if StartsWith(txt,"#include ",FALSE) then
+    return TRUE
+  else
+    return FALSE
+  endif
+end function
+
+Function isConst(byval txt as String) as Boolean
+  txt = Trim$(txt)
+  if StartsWith(txt,"const ",FALSE) then
+    return TRUE
+  else
+    return FALSE
+  endif
+end function
