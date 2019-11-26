@@ -1,4 +1,4 @@
-#MINVERSION 1.11.1.0
+﻿#MINVERSION 1.11.1.0
 
 uses "I18N"
 DIM I18N as new cI18N
@@ -9,9 +9,9 @@ DIM I18N as new cI18N
 '
 '*******************************************************************
 '#Region I18N_Tweaking
-'  Const AllLanguages_filename as String Value = "Translations" ' Translations.AllLanguages.xml
-'  Const Dev_local as String Value = "en-GB" ' In which language are written the strings in the script ?
-'  Const Additional_locals as String Value "fr-FR;it-IT" 'Which languages to prepare in the xml file ?
+'  $ALLLANGUAGES_FILENAME = "Translations" ' Translations.AllLanguages.xml
+'  $DEV_LOCAL = "en-GB" ' In which language are written the strings in the script ?
+'  $ADDITIONAL_LOCALS = "fr-FR;it-IT" 'Which languages to prepare in the xml file ?
 '#EndRegion
 '#Include once "I18N_helper.tbasicu"
 '*******************************************************************
@@ -19,7 +19,7 @@ DIM I18N as new cI18N
 
 
 
-I18N.Load(APP_ScriptPath, AllLanguages_filename)
+I18N.Load(APP_ScriptPath, $ALLLANGUAGES_FILENAME)
 
 Function i18nh(stringValue as string, Optional stringComment as String) as String
   Dim tempTXT as String = I18N.GetText(XMLEscape(stringValue))

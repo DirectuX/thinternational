@@ -1,4 +1,4 @@
-'---Script created on 11-14-2019 13:19:23 by
+﻿'---Script created on 11-14-2019 13:19:23 by
 
 Uses "Console"
 
@@ -7,9 +7,9 @@ REM There's no way to find out at runtime from which file filename the code is e
 
 
 #Region I18N_Tweaking
-  Const AllLanguages_filename as String Value = "Translations" ' Translations.AllLanguages.xml
-  Const Dev_local as String Value = "en-GB" ' In which language are written the strings in the script ?
-  Const Additional_locals as String Value "fr-FR;it-IT" 'Which languages to prepare in the xml file ?
+  $ALLLANGUAGES_FILENAME = "Translations" ' Translations.AllLanguages.xml
+  $DEV_LOCAL = "en-GB" ' In which language are written the strings in the script ?
+  $ADDITIONAL_LOCALS = "fr-FR;it-IT" 'Which languages to prepare in the xml file ?
 #EndRegion
 
 
