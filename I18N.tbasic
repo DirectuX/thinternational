@@ -364,4 +364,3 @@ Function isConst(byval txt as String) as Boolean
     return FALSE
   endif
 end function
- 
