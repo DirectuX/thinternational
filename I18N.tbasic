@@ -1,4 +1,4 @@
-'---Script created on 11-14-2019 21:46:52
+﻿'---Script created on 11-14-2019 21:46:52
 #MINVERSION 1.11.1.0
 
 #BUNDLE Version "Comments"         , "thinAir tool used to build/update translation file"
@@ -34,20 +34,20 @@ Dim IncludePath as String ' prefix path for all #include files
 Dim cTXT as String ' Current line String being processed
 Dim tTXT as String ' Temporary string for processing
 
-Const XMLExtension as String = ".AllLanguages.xml"
-Const AllLanguages_filenameCONST as String = "AllLanguages_filename"
+$XMLEXTENSION = ".AllLanguages.xml"
+$ALLLANGUAGES_FILENAME_CONST = "$ALLLANGUAGES_FILENAME"
 Dim AllLanguages_filenameVAR as String = "" ' 1st part of the filename of the XML translation file
-Const Dev_localCONST as String = "Dev_local"
+$DEV_LOCAL_CONST = "$DEV_LOCAL"
 Dim Dev_localVAR as String = "" ' language code of the strings in the script
-Const Additional_localsCONST as String = "Additional_locals"
+$ADDITIONAL_LOCALS_CONST = "$ADDITIONAL_LOCALS"
 Dim Additional_localsVAR as String = "" ' additionnal langage codes whished in the XML translation file
 Dim Additional_localsARR() as string ' splitted additionnal langage codes
 dim XMLFile as String ' path to the XML translation file
 Dim XMLFileExists as Boolean
 Dim tempFilename as String
 
-Const i18nhID as String = "I18NH("
-Const includeException as string = "I18N_helper.tbasicu"
+$I18NH_ID = "I18NH("
+$INCLUDE_EXCEPTION = "I18N_helper.tbasicu"
 
 Type TranslationData
   trKey as String      ' XML key
@@ -57,13 +57,13 @@ Type TranslationData
   trScript as String   ' filename of the script
 End Type
 
-const xmlComStart as string = "<!-->"
-const xmlComEnd as string = "<-->"
-Const xmlComWrap as String = "  *****  "
-Const xmlKeyIntro as string = "<Sentence key=" & $DQ
-Const xmlLangstart as string = $DQ & " lang=" & $DQ
-Const xmlLangEnd as string = $DQ & ">"
-Const xmlKeyOutro as string = "</Sentence>"
+$XML_COM_START = "<!-->"
+$XML_COM_END = "<-->"
+$XML_COM_WRAP = "  *****  "
+$XML_KEY_INTRO = "<Sentence key=" & $DQ
+$XML_LANG_START = $DQ & " lang=" & $DQ
+$XML_LANG_END = $DQ & ">"
+$XML_KEY_OUTRO = "</Sentence>"
 
 '[t] multidimensional arrays badly preserve resize (or at least as shown by thinDebug)
 Dim i18nhStr() as TranslationData ' use of TYPE to avoid multidimension
@@ -110,15 +110,15 @@ Function TBMain()
     
     if isConst(cTXT) Then
     '[] Feature: a "instr" that is not case-sensitive
-      tTXT = Remain$(cTXT,AllLanguages_filenameCONST,FALSE)      ' we need a "instr" that is not case-sensitive
+      tTXT = Remain$(cTXT,$ALLLANGUAGES_FILENAME_CONST,FALSE)      ' we need a "instr" that is not case-sensitive
       if len(tTXT)>0 Then   'Found! 
         AllLanguages_filenameVAR = Grab$(tTXT,chr$(34),chr$(34))
       Else
-        tTXT = Remain$(cTXT,Dev_localCONST,False)
+        tTXT = Remain$(cTXT,$DEV_LOCAL_CONST,False)
         if len(tTXT)>0 Then   'Found!
           Dev_localVAR = Grab$(tTXT,chr$(34),chr$(34))
         Else
-          tTXT = Remain$(cTXT,Additional_localsCONST,False)
+          tTXT = Remain$(cTXT,$ADDITIONAL_LOCALS_CONST,False)
           if len(tTXT)>0 Then   'Found!
             Additional_localsVAR = Grab$(tTXT,chr$(34),chr$(34))
           endif
@@ -126,7 +126,7 @@ Function TBMain()
       endif
     Elseif isInclude(cTXT) then
       tempIncludeName = Grab$(cTXT,chr$(34),chr$(34))
-      if tempIncludeName <> includeException then
+      if tempIncludeName <> $INCLUDE_EXCEPTION then
         incr includeCount
         ReDim Preserve includeFiles(includeCount)
         includeFiles(includeCount) = IncludePath & Grab$(cTXT,chr$(34),chr$(34))
@@ -188,11 +188,11 @@ Function TBMain()
   Split(Additional_localsVAR, ";", Additional_localsARR)
   Array Sort Additional_localsARR(1) , Ascend
   
-  XMLFile = includePath & AllLanguages_filenameVAR & XMLExtension
-  tempFilename = includePath & GUIDTXT$(GUID$) & XMLExtension
+  XMLFile = includePath & AllLanguages_filenameVAR & $XMLEXTENSION
+  tempFilename = includePath & GUIDTXT$(GUID$) & $XMLEXTENSION
   
   if FILE_Exists(XMLFile) Then ' Backup
-    FILE_Copy(XMLFile,FILE_PathSplit(mainFile,%Path_RootPath) & AllLanguages_filenameVAR & REMOVE$(DateTime$, ":") & XMLExtension)
+    FILE_Copy(XMLFile,FILE_PathSplit(mainFile,%Path_RootPath) & AllLanguages_filenameVAR & REMOVE$(DateTime$, ":") & $XMLEXTENSION)
     XMLFileExists = True
     I18N.Load(FILE_PathSplit(XMLFile,%Path_RootPath),FILE_PathSplit(XMLFile,%Path_File))
   Else
@@ -213,14 +213,14 @@ Function TBMain()
       endif
     endif
     if i18nhstr(i).trLineCode <> "" then
-      tTXT = $TAB & xmlComStart & i18nhstr(i).trLineCode & xmlComEnd
+      tTXT = $TAB & $XML_COM_START & i18nhstr(i).trLineCode & $XML_COM_END
       FILE_LinePrint(FileHandleOUT,tTXT)
     endif
     if i18nhstr(i).trComment <> "" then
-      tTXT = $TAB & wrap$(i18nhstr(i).trComment, xmlComStart, xmlComEnd)
+      tTXT = $TAB & wrap$(i18nhstr(i).trComment, $XML_COM_START, $XML_COM_END)
       FILE_LinePrint(FileHandleOUT,tTXT)
     endif
-    tTXT = $TAB & xmlKeyIntro & i18nhstr(i).trKey & xmlLangstart & Dev_localVAR & xmlLangEnd & i18nhstr(i).trOriginal & xmlKeyOutro
+    tTXT = $TAB & $XML_KEY_INTRO & i18nhstr(i).trKey & $XML_LANG_START & Dev_localVAR & $XML_LANG_END & i18nhstr(i).trOriginal & $XML_KEY_OUTRO
     FILE_LinePrint(FileHandleOUT,tTXT)
     For j as DWord = 1 to ubound(Additional_localsARR)
       if XMLFileExists then
@@ -229,7 +229,7 @@ Function TBMain()
       Else
         tTXT = ""
       endif
-      tTXT = $TAB & xmlKeyIntro & i18nhstr(i).trKey & xmlLangstart & Additional_localsARR(j) & xmlLangEnd & tTXT & xmlKeyOutro
+      tTXT = $TAB & $XML_KEY_INTRO & i18nhstr(i).trKey & $XML_LANG_START & Additional_localsARR(j) & $XML_LANG_END & tTXT & $XML_KEY_OUTRO
       FILE_LinePrint(FileHandleOUT,tTXT)
     next
     FILE_LinePrint(FileHandleOUT,"")
@@ -245,12 +245,12 @@ Function TBMain()
 end function
 
 Function PutScriptName(FH as DWord, txt as String)
-  dim tempTXT as String value = Wrap$(txt, xmlComWrap, xmlComWrap)
+  dim tempTXT as String value = Wrap$(txt, $XML_COM_WRAP, $XML_COM_WRAP)
   FILE_LinePrint(FH,"")
   FILE_LinePrint(FH,"")
-  FILE_LinePrint(FH,wrap$(string$(len(tempTXT),"*"), xmlComStart, xmlComEnd))
-  FILE_LinePrint(FH,wrap$(tempTXT, xmlComStart, xmlComEnd))
-  FILE_LinePrint(FH,wrap$(string$(len(tempTXT),"*"), xmlComStart, xmlComEnd))
+  FILE_LinePrint(FH,wrap$(string$(len(tempTXT),"*"), $XML_COM_START, $XML_COM_END))
+  FILE_LinePrint(FH,wrap$(tempTXT, $XML_COM_START, $XML_COM_END))
+  FILE_LinePrint(FH,wrap$(string$(len(tempTXT),"*"), $XML_COM_START, $XML_COM_END))
   FILE_LinePrint(FH,"")
   FILE_LinePrint(FH,"")
 end function
@@ -302,7 +302,7 @@ Function isI18N(byval txt as String, byval src as string)
   Dim txtkeeper as String 'Keeps original linecode
   txtkeeper = txt
   do
-    txt = Remain$(txt,i18nhID,False)
+    txt = Remain$(txt,$I18NH_ID,False)
     if len(txt)>0 then ' extract all strings
       incr localCounter
       incr i18nhCount
@@ -358,9 +358,10 @@ end function
 
 Function isConst(byval txt as String) as Boolean
   txt = Trim$(txt)
-  if StartsWith(txt,"const ",FALSE) then
+  if StartsWith(txt,"$",FALSE) then
     return TRUE
   else
     return FALSE
   endif
 end function
+ 
