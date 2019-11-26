@@ -1,0 +1,6 @@
+
+
+'Test for recursive & subfolder search of includes
+#include "TestSubFolder\TestFile3.tbasicu"
+
+printl $tab, i18nh("Testfile 2 reached !")
