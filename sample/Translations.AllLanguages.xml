@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<i18n>
+
+
+<!-->********************************************<-->
+<!-->  *****  T:\sample\TestFile1.tbasic  *****  <-->
+<!-->********************************************<-->
+
+
+	<Sentence key="Testfile 1" lang="en-GB">Testfile 1</Sentence>
+	<Sentence key="Testfile 1" lang="fr-FR">Fichier de test 1</Sentence>
+	<Sentence key="Testfile 1" lang="it-IT"></Sentence>
+
+	<!-->keep the word 'Hello' in the translated string<-->
+	<Sentence key="Hello dear user !" lang="en-GB">Hello dear user !</Sentence>
+	<Sentence key="Hello dear user !" lang="fr-FR">Hello cher utilisateur !</Sentence>
+	<Sentence key="Hello dear user !" lang="it-IT"></Sentence>
+
+	<!-->Please keep the word 'Hello' in english in the translated string<-->
+	<Sentence key="Hello dear {1} !" lang="en-GB">Hello dear {1} !</Sentence>
+	<Sentence key="Hello dear {1} !" lang="fr-FR">Hello cher {1} !</Sentence>
+	<Sentence key="Hello dear {1} !" lang="it-IT"></Sentence>
+
+	<Sentence key="Japanese : まど を 閉じる。" lang="en-GB">Japanese : まど を 閉じる。</Sentence>
+	<Sentence key="Japanese : まど を 閉じる。" lang="fr-FR">Japonais : まど を 閉じる。</Sentence>
+	<Sentence key="Japanese : まど を 閉じる。" lang="it-IT"></Sentence>
+
+	<Sentence key="UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲" lang="en-GB">UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲</Sentence>
+	<Sentence key="UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲" lang="fr-FR">Icones UTF8 : 🌎✈🔧🎥🦇🔕🎧✔🎲</Sentence>
+	<Sentence key="UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲" lang="it-IT"></Sentence>
+
+	<!-->printl $tab, i18nh("This linecode ") & i18nh("has three ") & i18nh("parts")<-->
+	<Sentence key="This linecode " lang="en-GB">This linecode </Sentence>
+	<Sentence key="This linecode " lang="fr-FR">Cette ligne de code </Sentence>
+	<Sentence key="This linecode " lang="it-IT"></Sentence>
+
+	<Sentence key="has three " lang="en-GB">has three </Sentence>
+	<Sentence key="has three " lang="fr-FR">a trois </Sentence>
+	<Sentence key="has three " lang="it-IT"></Sentence>
+
+	<Sentence key="parts" lang="en-GB">parts</Sentence>
+	<Sentence key="parts" lang="fr-FR">parties</Sentence>
+	<Sentence key="parts" lang="it-IT"></Sentence>
+
+	<!-->printl $tab, i18nh("This linecode ","First part") & i18nh("is splitted in three ","Second part") & i18nh("and has comments too!","Third part")<-->
+	<!-->First part<-->
+	<Sentence key="This linecode " lang="en-GB">This linecode </Sentence>
+	<Sentence key="This linecode " lang="fr-FR">Cette ligne de code </Sentence>
+	<Sentence key="This linecode " lang="it-IT"></Sentence>
+
+	<!-->Second part<-->
+	<Sentence key="is splitted in three " lang="en-GB">is splitted in three </Sentence>
+	<Sentence key="is splitted in three " lang="fr-FR">est scindé en trois </Sentence>
+	<Sentence key="is splitted in three " lang="it-IT"></Sentence>
+
+	<!-->Third part<-->
+	<Sentence key="and has comments too!" lang="en-GB">and has comments too!</Sentence>
+	<Sentence key="and has comments too!" lang="fr-FR">et a aussi des commentaires!</Sentence>
+	<Sentence key="and has comments too!" lang="it-IT"></Sentence>
+
+
+
+<!-->*********************************************<-->
+<!-->  *****  T:\sample\TestFile2.tbasicu  *****  <-->
+<!-->*********************************************<-->
+
+
+	<Sentence key="Testfile 2 reached !" lang="en-GB">Testfile 2 reached !</Sentence>
+	<Sentence key="Testfile 2 reached !" lang="fr-FR">Fichier de test 2 atteint !</Sentence>
+	<Sentence key="Testfile 2 reached !" lang="it-IT"></Sentence>
+
+
+
+<!-->***********************************************************<-->
+<!-->  *****  T:\sample\TestSubFolder\TestFile3.tbasicu  *****  <-->
+<!-->***********************************************************<-->
+
+
+	<Sentence key="Testfile 3 reached !" lang="en-GB">Testfile 3 reached !</Sentence>
+	<Sentence key="Testfile 3 reached !" lang="fr-FR">Fichier test 3 atteint !</Sentence>
+	<Sentence key="Testfile 3 reached !" lang="it-IT"></Sentence>
+
+</i18n>
