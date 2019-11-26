@@ -11,7 +11,7 @@ Tool to speed up translation of thinBasic scripts
 
 
 ## Build translation file without thinAir integration
-Or see thinAir integration below.
+**Or see thinAir integration below.**
 
 1. Open your main script in thinAir
 2. Right click on the script TAB name
