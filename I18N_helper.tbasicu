@@ -1,0 +1,47 @@
+#MINVERSION 1.11.1.0
+
+uses "I18N"
+DIM I18N as new cI18N
+
+'*******************************************************************
+'
+' The section below MUST be adjusted and copied to the main script
+'
+'*******************************************************************
+'#Region I18N_Tweaking
+'  Const AllLanguages_filename as String Value = "Translations" ' Translations.AllLanguages.xml
+'  Const Dev_local as String Value = "en-GB" ' In which language are written the strings in the script ?
+'  Const Additional_locals as String Value "fr-FR;it-IT" 'Which languages to prepare in the xml file ?
+'#EndRegion
+'#Include once "I18N_helper.tbasicu"
+'*******************************************************************
+'*******************************************************************
+
+
+
+I18N.Load(APP_ScriptPath, AllLanguages_filename)
+
+Function i18nh(stringValue as string, Optional stringComment as String) as String
+  Dim tempTXT as String = I18N.GetText(XMLEscape(stringValue))
+  If tempTXT = "" then
+    Return stringValue
+  else
+    Return XMLUnescapePartially(tempTXT)
+  endif
+end function
+
+Function XMLEscape(stringValue as String) as String
+  stringValue=Replace$(stringValue,Chr$(38),"&amp;") '     '&' must be first
+  stringValue=Replace$(stringValue,Chr$(34),"&quot;")
+  stringValue=Replace$(stringValue,Chr$(39),"&apos;")
+  stringValue=Replace$(stringValue,Chr$(60),"&lt;")
+  stringValue=Replace$(stringValue,Chr$(62),"&gt;")
+  Return stringValue
+end function
+
+Function XMLUnescapePartially(stringValue as String) as String
+  stringValue=Replace$(stringValue,"&lt;",Chr$(60))
+  stringValue=Replace$(stringValue,"&gt;",Chr$(62))
+  stringValue=Replace$(stringValue,"&amp;",Chr$(38)) '     '&' must be last
+  Return stringValue
+end function
