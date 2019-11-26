@@ -1,0 +1,48 @@
+'---Script created on 11-14-2019 13:19:23 by
+
+Uses "Console"
+
+
+REM There's no way to find out at runtime from which file filename the code is executed (main .basic file or one of included .tbasicu unit file)
+
+
+#Region I18N_Tweaking
+  Const AllLanguages_filename as String Value = "Translations" ' Translations.AllLanguages.xml
+  Const Dev_local as String Value = "en-GB" ' In which language are written the strings in the script ?
+  Const Additional_locals as String Value "fr-FR;it-IT" 'Which languages to prepare in the xml file ?
+#EndRegion
+
+
+#include "I18N_helper.tbasicu"
+
+
+for nLocale as long = 1 to 3
+  select case nLocale
+    case 1
+      i18n.Setlocale("en-GB")
+    case 2
+      i18n.Setlocale("fr-FR")
+    case 3
+      i18n.Setlocale("it-IT")
+  end select
+
+  printl "Current Locale is:", i18n.Getlocale in %CCOLOR_FLIGHTCYAN
+
+  printl $tab, i18nh("Testfile 1")
+  printl $tab, i18nh("Hello dear user !","keep the word 'Hello' in the translated string")
+  printl $tab, StrFormat$(i18nh("Hello dear {1} !","Please keep the word 'Hello' in english in the translated string"),"T.B.")
+  printl $tab, i18nh("Japanese : まど を 閉じる。")
+  printl $tab, i18nh("UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲")
+  printl $tab, i18nh("This linecode ") & i18nh("has three ") & i18nh("parts")
+  printl $tab, i18nh("This linecode ","First part") & i18nh("is splitted in three ","Second part") & i18nh("and has comments too!","Third part")
+  PrintL
+
+Next
+
+
+#Include once "TestFile2.tbasicu"
+'Double include to test redundancy removing
+#Include once "TestFile2.tbasicu"
+
+
+WaitKey
