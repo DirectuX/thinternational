@@ -2,10 +2,14 @@
 <i18n>
 
 
-<!-->********************************************<-->
-<!-->  *****  T:\sample\TestFile1.tbasic  *****  <-->
-<!-->********************************************<-->
+<!-->*********************************************************************<-->
+<!-->  *****  T:\_DEV\GIT\thinternational\sample\TestFile1.tbasic  *****  <-->
+<!-->*********************************************************************<-->
 
+
+	<Sentence key="Current Locale is:" lang="en-GB">Current Locale is:</Sentence>
+	<Sentence key="Current Locale is:" lang="fr-FR">La localisation actuelle est:</Sentence>
+	<Sentence key="Current Locale is:" lang="it-IT"></Sentence>
 
 	<Sentence key="Testfile 1" lang="en-GB">Testfile 1</Sentence>
 	<Sentence key="Testfile 1" lang="fr-FR">Fichier de test 1</Sentence>
@@ -21,37 +25,29 @@
 	<Sentence key="Hello dear {1} !" lang="fr-FR">Hello cher {1} !</Sentence>
 	<Sentence key="Hello dear {1} !" lang="it-IT"></Sentence>
 
-	<Sentence key="Japanese : まど を 閉じる。" lang="en-GB">Japanese : まど を 閉じる。</Sentence>
-	<Sentence key="Japanese : まど を 閉じる。" lang="fr-FR">Japonais : まど を 閉じる。</Sentence>
-	<Sentence key="Japanese : まど を 閉じる。" lang="it-IT"></Sentence>
+	<!-->outStr &= i18nh("This linecode") & " " & i18nh("has three") & " " & i18nh("parts") & $CRLF<-->
+	<Sentence key="This linecode" lang="en-GB">This linecode</Sentence>
+	<Sentence key="This linecode" lang="fr-FR">Cette ligne de code</Sentence>
+	<Sentence key="This linecode" lang="it-IT"></Sentence>
 
-	<Sentence key="UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲" lang="en-GB">UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲</Sentence>
-	<Sentence key="UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲" lang="fr-FR">Icones UTF8 : 🌎✈🔧🎥🦇🔕🎧✔🎲</Sentence>
-	<Sentence key="UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲" lang="it-IT"></Sentence>
-
-	<!-->printl $tab, i18nh("This linecode ") & i18nh("has three ") & i18nh("parts")<-->
-	<Sentence key="This linecode " lang="en-GB">This linecode </Sentence>
-	<Sentence key="This linecode " lang="fr-FR">Cette ligne de code </Sentence>
-	<Sentence key="This linecode " lang="it-IT"></Sentence>
-
-	<Sentence key="has three " lang="en-GB">has three </Sentence>
-	<Sentence key="has three " lang="fr-FR">a trois </Sentence>
-	<Sentence key="has three " lang="it-IT"></Sentence>
+	<Sentence key="has three" lang="en-GB">has three</Sentence>
+	<Sentence key="has three" lang="fr-FR">a trois</Sentence>
+	<Sentence key="has three" lang="it-IT"></Sentence>
 
 	<Sentence key="parts" lang="en-GB">parts</Sentence>
 	<Sentence key="parts" lang="fr-FR">parties</Sentence>
 	<Sentence key="parts" lang="it-IT"></Sentence>
 
-	<!-->printl $tab, i18nh("This linecode ","First part") & i18nh("is splitted in three ","Second part") & i18nh("and has comments too!","Third part")<-->
+	<!-->outStr &= i18nh("This linecode","First part") & " " & i18nh("is splitted in three","Second part") & " " & i18nh("and has comments too!","Third part")<-->
 	<!-->First part<-->
-	<Sentence key="This linecode " lang="en-GB">This linecode </Sentence>
-	<Sentence key="This linecode " lang="fr-FR">Cette ligne de code </Sentence>
-	<Sentence key="This linecode " lang="it-IT"></Sentence>
+	<Sentence key="This linecode" lang="en-GB">This linecode</Sentence>
+	<Sentence key="This linecode" lang="fr-FR">Cette ligne de code</Sentence>
+	<Sentence key="This linecode" lang="it-IT"></Sentence>
 
 	<!-->Second part<-->
-	<Sentence key="is splitted in three " lang="en-GB">is splitted in three </Sentence>
-	<Sentence key="is splitted in three " lang="fr-FR">est scindée en trois </Sentence>
-	<Sentence key="is splitted in three " lang="it-IT"></Sentence>
+	<Sentence key="is splitted in three" lang="en-GB">is splitted in three</Sentence>
+	<Sentence key="is splitted in three" lang="fr-FR">est scindée en trois</Sentence>
+	<Sentence key="is splitted in three" lang="it-IT"></Sentence>
 
 	<!-->Third part<-->
 	<Sentence key="and has comments too!" lang="en-GB">and has comments too!</Sentence>
@@ -60,9 +56,9 @@
 
 
 
-<!-->*********************************************<-->
-<!-->  *****  T:\sample\TestFile2.tbasicu  *****  <-->
-<!-->*********************************************<-->
+<!-->**********************************************************************<-->
+<!-->  *****  T:\_DEV\GIT\thinternational\sample\TestFile2.tbasicu  *****  <-->
+<!-->**********************************************************************<-->
 
 
 	<Sentence key="Testfile 2 reached !" lang="en-GB">Testfile 2 reached !</Sentence>
@@ -71,9 +67,9 @@
 
 
 
-<!-->***********************************************************<-->
-<!-->  *****  T:\sample\TestSubFolder\TestFile3.tbasicu  *****  <-->
-<!-->***********************************************************<-->
+<!-->************************************************************************************<-->
+<!-->  *****  T:\_DEV\GIT\thinternational\sample\TestSubFolder\TestFile3.tbasicu  *****  <-->
+<!-->************************************************************************************<-->
 
 
 	<Sentence key="Testfile 3 reached !" lang="en-GB">Testfile 3 reached !</Sentence>

@@ -1,6 +1,4 @@
-﻿'---Script created on 11-14-2019 13:19:23 by
-
-Uses "Console"
+'---Script created on 11-14-2019 13:19:23 by
 
 
 REM There's no way to find out at runtime from which file filename the code is executed (main .basic file or one of included .tbasicu unit file)
@@ -16,7 +14,12 @@ REM There's no way to find out at runtime from which file filename the code is e
 #include "I18N_helper.tbasicu"
 
 
+
+Dim outStr, titleStr as String
+$USERNAME = "T.B."
+
 for nLocale as long = 1 to 3
+
   select case nLocale
     case 1
       i18n.Setlocale("en-GB")
@@ -25,24 +28,36 @@ for nLocale as long = 1 to 3
     case 3
       i18n.Setlocale("it-IT")
   end select
+  
+  titleStr = i18nh("Current Locale is:") & " " & i18n.Getlocale
+  
+  ' Simple string translation
+  outStr = i18nh("Testfile 1") & $CRLF
+  
+  ' String translation and a comment to insert for the translator
+  outStr &= i18nh("Hello dear user !","keep the word 'Hello' in the translated string") & $CRLF
+  
+  ' String wih a placeholder for string substituting
+  outStr &= StrFormat$(i18nh("Hello dear {1} !","Please keep the word 'Hello' in english in the translated string"),$USERNAME) & $CRLF
+  
+  '[t] I18N.GetText do trim$ data , see https://www.thinbasic.com/community/showthread.php?12988-thinternationnal&p=95165&viewfull=1#post95165
+  ' so, currenty, spaces at both ends must be added by code 
+  outStr &= i18nh("This linecode") & " " & i18nh("has three") & " " & i18nh("parts") & $CRLF
+  
+  '[t] I18N.GetText does NOT support retrieving keys with higher block range unicode chars
+  ' ex: i18nh("まど を 閉じる。") (Japanese)
+  ' or: i18nh("🌎✈🔧🎥🦇🔕🎧✔🎲") (unicode icons)
+  ' won't work
+  
+  'Multipart string with comment
+  outStr &= i18nh("This linecode","First part") & " " & i18nh("is splitted in three","Second part") & " " & i18nh("and has comments too!","Third part")
 
-  printl "Current Locale is:", i18n.Getlocale in %CCOLOR_FLIGHTCYAN
-
-  printl $tab, i18nh("Testfile 1")
-  printl $tab, i18nh("Hello dear user !","keep the word 'Hello' in the translated string")
-  printl $tab, StrFormat$(i18nh("Hello dear {1} !","Please keep the word 'Hello' in english in the translated string"),"T.B.")
-  printl $tab, i18nh("Japanese : まど を 閉じる。")
-  printl $tab, i18nh("UTF8 icons : 🌎✈🔧🎥🦇🔕🎧✔🎲")
-  printl $tab, i18nh("This linecode ") & i18nh("has three ") & i18nh("parts")
-  printl $tab, i18nh("This linecode ","First part") & i18nh("is splitted in three ","Second part") & i18nh("and has comments too!","Third part")
-  PrintL
-
+  '[t] MsgBoxw outputs strange chars instead of diacritics, but why ?
+  MsgBox (outStr,,titleStr)
+  
 Next
 
 
 #Include once "TestFile2.tbasicu"
 'Double include to test redundancy removing
 #Include once "TestFile2.tbasicu"
-
-
-WaitKey
