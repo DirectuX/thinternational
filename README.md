@@ -24,7 +24,8 @@ Tool to speed up translation of thinBasic scripts
 see thinternational _Sample_ folder fo example.
 
 
-## thinAir integration 
+## thinAir integration (with bundling version)
+**Or see thinAir integration without bundling below.**
 
 1. Whithin thinAir build _I18N.tbasic_ to _I18N.exe_
 2. Create folder _%thinBasic_Installation_Folder%\thinAir\Tools\thinternational_
@@ -33,10 +34,25 @@ see thinternational _Sample_ folder fo example.
 <pre>
 [thinI18N]
 Menu=thinternational
-CommandLine=%thinAirinstallpath%\Tools\thinternational\I18Nb.exe %sourcecodefullpathname%
+CommandLine=%thinAirinstallpath%\Tools\thinternational\I18N.exe %sourcecodefullpathname%
 SaveScriptBefore=true
 </pre>
 5. Restart thinAir
+
+
+## thinAir integration (without bundling version)
+
+1. Create folder _%thinBasic_Installation_Folder%\thinAir\Tools\thinternational_
+3. Move _I18N.tbasic_ to _%thinBasic_Installation_Folder%\thinAir\Tools\thinternational\_
+4. Edit  _%thinBasic_Installation_Folder%\thinAir\Tools\thinAir_Tools.ini_ and append the following section :
+<pre>
+[thinI18N]
+Menu=thinternational
+CommandLine=%thinbasicinstallpath%\thinbasicc.exe "%thinAirinstallpath%\Tools\thinternational\i18N.tbasic " %sourcecodefullpathname%
+SaveScriptBefore=true
+</pre>
+5. Restart thinAir
+
 
 ## translation-file building 
 
