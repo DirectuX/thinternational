@@ -34,7 +34,7 @@ see thinternational _Sample_ folder fo example.
 <pre>
 [thinI18N]
 Menu=thinternational
-CommandLine=%thinAirinstallpath%\Tools\thinternational\I18N.exe %sourcecodefullpathname%
+CommandLine=%thinAirinstallpath%\Tools\thinternational\I18N.exe %sourcecodefullpathnameext%
 SaveScriptBefore=true
 </pre>
 5. Restart thinAir
@@ -48,7 +48,7 @@ SaveScriptBefore=true
 <pre>
 [thinI18N]
 Menu=thinternational
-CommandLine=%thinbasicinstallpath%\thinbasicc.exe "%thinAirinstallpath%\Tools\thinternational\i18N.tbasic " %sourcecodefullpathname%
+CommandLine=%thinbasicinstallpath%\thinbasicc.exe "%thinAirinstallpath%\Tools\thinternational\i18N.tbasic " %sourcecodefullpathnameext%
 SaveScriptBefore=true
 </pre>
 5. Restart thinAir
