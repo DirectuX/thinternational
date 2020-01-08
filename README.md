@@ -1,5 +1,5 @@
 # thinternational
-Tool to speed up translation of thinBasic scripts
+Tool to speed up translation of [thinBasic](https://www.thinbasic.com) scripts
 
 
 ## Setup your script for translation
