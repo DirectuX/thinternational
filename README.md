@@ -1,6 +1,15 @@
+###### ***Readme last reviewed at ThinBasic v1.11.6.0***
+
 # thinternational
 Tool to speed up translation of [thinBasic](https://www.thinbasic.com) scripts
 
+## Table of content
+[Setup your script for translation](https://github.com/DirectuX/thinternational/blob/master/README.md#setup-your-script-for-translation)<br>
+[Build translation file without thinAir integration](https://github.com/DirectuX/thinternational/blob/master/README.md#build-translation-file-without-thinair-integration)<br>
+[thinAir integration (with bundling version)](https://github.com/DirectuX/thinternational/blob/master/README.md#thinair-integration-with-bundling-version)<br>
+[thinAir integration (without bundling version)](https://github.com/DirectuX/thinternational/blob/master/README.md#thinair-integration-without-bundling-version)<br>
+[Translation-file building](https://github.com/DirectuX/thinternational/blob/master/README.md#translation-file-building)<br>
+[Limitations](https://github.com/DirectuX/thinternational/blob/master/README.md#limitations)<br>
 
 ## Setup your script for translation
 
@@ -60,3 +69,8 @@ SaveScriptBefore=true
 2. thinAir menu : Tools\User Tools\thinternational
 3. In your main script folder, edit your xml file (I use Notepad++) to complete it with translations.
 
+## limitations
+
+Due to an [actual limitation](https://www.thinbasic.com/community/project.php?issueid=622) from TB's gettext() that trims translated strings, beginning and ending spaces characters, if any, have to be hardcoded. 
+
+Due to [another limitation](https://www.thinbasic.com/community/project.php?issueid=596#note3165) from TB's gettext(), all source languages as well as later versions (mostly symbols) of unicode characters are not supported in the script's body. Tested working language are english, french, italian. One workaround is to declare the source language (the one in the script) with a fake name (example: _$DEV_LOCAL = "Source_en-GB"_ ) and use the translation file to store any convenient character even for _i18n.Setlocale("en-GB")_ .
